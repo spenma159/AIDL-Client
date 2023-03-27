@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -232,11 +233,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onServiceDisconnected(ComponentName componentName) {
-
+                Log.i(TAG, "onServiceConnected : DISCONNECTED");
             }
         };
-        Intent intent = new Intent("AIDLCalculateService");
-        intent.setPackage("com.example");
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.example.aidlserver", "com.example.aidlserver.AIDLCalculateService"));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            startForegroundService(intent);
+        }else{
+            startService(intent);
+        }
         bindService(intent,serviceCon,BIND_AUTO_CREATE);
         inisialisasi();
         btnSetOnClick();
